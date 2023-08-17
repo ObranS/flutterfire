@@ -163,12 +163,13 @@ public class FlutterFirebaseMessagingBackgroundExecutor implements MethodCallHan
                         "Creating background FlutterEngine instance, with args: "
                             + Arrays.toString(shellArgs.toArray()));
                     backgroundFlutterEngine =
-                        new FlutterEngine(
-                            ContextHolder.getApplicationContext(), shellArgs.toArray());
+                      new FlutterEngine(
+                        ContextHolder.getApplicationContext(), null, null, shellArgs.toArray(), false);
                   } else {
                     Log.i(TAG, "Creating background FlutterEngine instance.");
                     backgroundFlutterEngine =
-                        new FlutterEngine(ContextHolder.getApplicationContext());
+                      new FlutterEngine(
+                        ContextHolder.getApplicationContext(), null, null, null, false);
                   }
                   // We need to create an instance of `FlutterEngine` before looking up the
                   // callback. If we don't, the callback cache won't be initialized and the
