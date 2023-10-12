@@ -8,7 +8,6 @@
 import 'dart:typed_data';
 
 import 'package:cloud_firestore_platform_interface/cloud_firestore_platform_interface.dart';
-import 'package:cloud_firestore_platform_interface/src/internal/field_path_type.dart';
 import 'package:cloud_firestore_platform_interface/src/method_channel/method_channel_field_value.dart';
 import 'package:firebase_core/firebase_core.dart';
 // TODO(Lyokone): remove once we bump Flutter SDK min version to 3.3
@@ -97,6 +96,7 @@ class FirestoreMessageCodec extends StandardMessageCodec {
     } else if (value is MethodChannelFirebaseFirestore) {
       buffer.putUint8(_kFirestoreInstance);
       writeValue(buffer, value.app.name);
+      writeValue(buffer, value.databaseURL);
       writeValue(buffer, value.settings);
     } else if (value is MethodChannelQuery) {
       buffer.putUint8(_kFirestoreQuery);
@@ -134,9 +134,12 @@ class FirestoreMessageCodec extends StandardMessageCodec {
       case _kDocumentReference:
         final String appName = readValue(buffer)! as String;
         final String path = readValue(buffer)! as String;
+        final String databaseURL = readValue(buffer)! as String;
+
         final FirebaseApp app = Firebase.app(appName);
         final FirebaseFirestorePlatform firestore =
-            FirebaseFirestorePlatform.instanceFor(app: app);
+            FirebaseFirestorePlatform.instanceFor(
+                app: app, databaseURL: databaseURL);
         return firestore.doc(path);
       case _kBlob:
         final int length = readSize(buffer);
